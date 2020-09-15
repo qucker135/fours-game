@@ -2,35 +2,35 @@
 
 using namespace std;
 
-int wierszy=0,kolumn=0;
-bool nr_gracza = 0;
-int iksow=0,kolek=0;
+int rows=0,columns=0;
+bool player_nr = 0;
+int Xs=0,Os=0;
 
-void wyswietlPlansze(char** tab,int kolumn, int wierszy)
+void showBoard(char** tab,int columns, int rows)
 {
-	for(int i=0;i<wierszy;i++){
-		for(int j=0;j<kolumn;j++){
-			cout<<"  "<<tab[j][wierszy-1-i];
+	for(int i=0;i<rows;i++){
+		for(int j=0;j<columns;j++){
+			cout<<"  "<<tab[j][rows-1-i];
 		}
 		cout<<endl<<endl;
 	}
-	for(int i=1;i<=kolumn;i++){
+	for(int i=1;i<=columns;i++){
 		if(i<10) cout<<"  "<<i;
 		else cout<<" "<<i;
 	}
 	cout<<endl<<endl;
 }
 
-char sprawdzStanPlanszy(char** tab,int kolumn,int wierszy){
-	bool czyPelnaPlansza = true;
-	for(int i=0;i<kolumn;i++){
-		for(int j=0;j<wierszy;j++){
-			if(tab[i][j]=='_') czyPelnaPlansza = false;
-			//sprawdzenie czy nie nastapila czyjas wygrana
-			bool dol=false,gora=false,prawo=false,lewo=false; //zmienne okreslajace ktore kierunki sprawdzic
+char checkBoardState(char** tab,int columns,int rows){
+	bool BoardFull = true;
+	for(int i=0;i<columns;i++){
+		for(int j=0;j<rows;j++){
+			if(tab[i][j]=='_') BoardFull = false;
+			//check if someone's just won
+			bool down=false,up=false,right=false,left=false; //directions to check
 			
 			if(j>=3){
-				dol=true;
+				down=true;
 				if(tab[i][j]==tab[i][j-1]&&tab[i][j-1]==tab[i][j-2]&&tab[i][j-2]==tab[i][j-3]){
 					if(tab[i][j]=='x'){
 						return 'x';break;
@@ -41,8 +41,8 @@ char sprawdzStanPlanszy(char** tab,int kolumn,int wierszy){
 				}
 			}
 			
-			if(j<=wierszy-4){
-				gora=true;
+			if(j<=rows-4){
+				up=true;
 				if(tab[i][j]==tab[i][j+1]&&tab[i][j+1]==tab[i][j+2]&&tab[i][j+2]==tab[i][j+3]){
 					if(tab[i][j]=='x'){
 						return 'x';break;
@@ -54,7 +54,7 @@ char sprawdzStanPlanszy(char** tab,int kolumn,int wierszy){
 			}
 			
 			if(i>=3){
-				lewo=true;
+				left=true;
 				if(tab[i][j]==tab[i-1][j]&&tab[i-1][j]==tab[i-2][j]&&tab[i-2][j]==tab[i-3][j]){
 					if(tab[i][j]=='x'){
 						return 'x';break;
@@ -65,8 +65,8 @@ char sprawdzStanPlanszy(char** tab,int kolumn,int wierszy){
 				}
 			}
 			
-			if(i<=kolumn-4){
-				prawo=true;
+			if(i<=columns-4){
+				right=true;
 				if(tab[i][j]==tab[i+1][j]&&tab[i+1][j]==tab[i+2][j]&&tab[i+2][j]==tab[i+3][j]){
 					if(tab[i][j]=='x'){
 						return 'x';break;
@@ -77,9 +77,9 @@ char sprawdzStanPlanszy(char** tab,int kolumn,int wierszy){
 				}
 			}
 			
-			//SKOSY
+			//SKEWS
 			
-			if(gora&&prawo){
+			if(up&&right){
 				if(tab[i][j]==tab[i+1][j+1]&&tab[i+1][j+1]==tab[i+2][j+2]&&tab[i+2][j+2]==tab[i+3][j+3]){
 					if(tab[i][j]=='x'){
 						return 'x';break;
@@ -90,7 +90,7 @@ char sprawdzStanPlanszy(char** tab,int kolumn,int wierszy){
 				}
 			}
 			
-			if(gora&&lewo){
+			if(up&&left){
 				if(tab[i][j]==tab[i-1][j+1]&&tab[i-1][j+1]==tab[i-2][j+2]&&tab[i-2][j+2]==tab[i-3][j+3]){
 					if(tab[i][j]=='x'){
 						return 'x';break;
@@ -101,7 +101,7 @@ char sprawdzStanPlanszy(char** tab,int kolumn,int wierszy){
 				}
 			}
 			
-			if(dol&&lewo){
+			if(down&&left){
 				if(tab[i][j]==tab[i-1][j-1]&&tab[i-1][j-1]==tab[i-2][j-2]&&tab[i-2][j-2]==tab[i-3][j-3]){
 					if(tab[i][j]=='x'){
 						return 'x';break;
@@ -112,7 +112,7 @@ char sprawdzStanPlanszy(char** tab,int kolumn,int wierszy){
 				}
 			}
 			
-			if(dol&&prawo){
+			if(down&&right){
 				if(tab[i][j]==tab[i+1][j-1]&&tab[i+1][j-1]==tab[i+2][j-2]&&tab[i+2][j-2]==tab[i+3][j-3]){
 					if(tab[i][j]=='x'){
 						return 'x';break;
@@ -125,8 +125,8 @@ char sprawdzStanPlanszy(char** tab,int kolumn,int wierszy){
 			
 		}
 	}
-	if(!czyPelnaPlansza) return 'n';
-	else return 'r';
+	if(!BoardFull) return 'n';
+	else return 'd';
 }
 
 int main(){
@@ -134,101 +134,101 @@ int main(){
 	cout<<endl;
 	
 	do{
-		cout<<"  Podaj liczbe kolumn(4-99): ";cin>>kolumn;
-	}while(kolumn<4||kolumn>99);
+		cout<<"  Insert number of columns(4-99): ";cin>>columns;
+	}while(columns<4||columns>99);
 	
 	do{
-		cout<<"  Podaj liczbe wierszy(4-99): ";cin>>wierszy;
-	}while(wierszy<4||wierszy>99);
+		cout<<"  Insert number of rows(4-99): ";cin>>rows;
+	}while(rows<4||rows>99);
 	
-	char** tab = new char*[kolumn];
+	char** tab = new char*[columns];
 	
-	for(int i=0;i<kolumn;i++){
-		tab[i] = new char[wierszy];
+	for(int i=0;i<columns;i++){
+		tab[i] = new char[rows];
 	}
 	
-	for(int i=0;i<kolumn;i++){
-		for(int j=0;j<wierszy;j++){
+	for(int i=0;i<columns;i++){
+		for(int j=0;j<rows;j++){
 			tab[i][j] = '_';
 		}
 	}
 	
-	int* indexy = new int[kolumn];
+	int* indeces = new int[columns];
 	
-	for(int i=0;i<kolumn;i++){
-		indexy[i] = 0;
+	for(int i=0;i<columns;i++){
+		indeces[i] = 0;
 	}
 	
-	while(sprawdzStanPlanszy(tab,kolumn,wierszy)=='n') // w praktyce do momentu, a¿ ktoœ nie wygra
+	while(checkBoardState(tab,columns,rows)=='n') // while nobody won
 	{
-		wyswietlPlansze(tab,kolumn,wierszy);
+		showBoard(tab,columns,rows);
 		int bfr;
 		a:
 		bfr=0;
-		while(bfr<1||bfr>kolumn||indexy[bfr-1]>=wierszy){
-			if(!nr_gracza)cout<<"  GraczX>";
-			else cout<<"  GraczO>";
+		while(bfr<1||bfr>columns||indeces[bfr-1]>=rows){
+			if(!player_nr)cout<<"  PlayerX>";
+			else cout<<"  PlayerO>";
 			cin>>bfr;
 		}
 		
-		if(!nr_gracza) // Gracz1
+		if(!player_nr) // Player1
 		{
-			tab[bfr-1][indexy[bfr-1]] = 'x';
-			indexy[bfr-1]++;
-			iksow++;
+			tab[bfr-1][indeces[bfr-1]] = 'x';
+			indeces[bfr-1]++;
+			Xs++;
 		}
-		if(nr_gracza) // Gracz2
+		if(player_nr) // Player2
 		{
-			tab[bfr-1][indexy[bfr-1]] = 'o';
-			indexy[bfr-1]++;
-			kolek++;
+			tab[bfr-1][indeces[bfr-1]] = 'o';
+			indeces[bfr-1]++;
+			Os++;
 		}		
 		
-		if(sprawdzStanPlanszy(tab,kolumn,wierszy)=='x'&&iksow==4){
-			indexy[bfr-1]--;
-			tab[bfr-1][indexy[bfr-1]] = '_';
-			iksow--;
-			wyswietlPlansze(tab,kolumn,wierszy);
-			cout<<"  Oj, tak nie wolno!!!"<<endl;
-			cout<<"  Nie wolno wygrac w pierszych czterech ruchach."<<endl;
-			cout<<"  Sprobuj wybrac inna kolumne."<<endl;
+		if(checkBoardState(tab,columns,rows)=='x'&&Xs==4){
+			indeces[bfr-1]--;
+			tab[bfr-1][indeces[bfr-1]] = '_';
+			Xs--;
+			showBoard(tab,columns,rows);
+			cout<<"  It is not permitted!!!"<<endl;
+			cout<<"  You are not allowed to win in the first four moves."<<endl;
+			cout<<"  Try to choose another column."<<endl;
 			goto a;
 		}
 		
-		if(sprawdzStanPlanszy(tab,kolumn,wierszy)=='o'&&kolek==4){
-			indexy[bfr-1]--;
-			tab[bfr-1][indexy[bfr-1]] = '_';
-			kolek--;
-			wyswietlPlansze(tab,kolumn,wierszy);
-			cout<<"  Oj, tak nie wolno!!!"<<endl;
-			cout<<"  Nie wolno wygrac w pierszych czterech ruchach."<<endl;
-			cout<<"  Sprobuj wybrac inna kolumne."<<endl;
+		if(checkBoardState(tab,columns,rows)=='o'&&Os==4){
+			indeces[bfr-1]--;
+			tab[bfr-1][indeces[bfr-1]] = '_';
+			Os--;
+			showBoard(tab,columns,rows);
+			cout<<"  It is not permitted!!!"<<endl;
+			cout<<"  You are not allowed to win in the first four moves."<<endl;
+			cout<<"  Try to choose another column."<<endl;
 			goto a;
 		}
 		
-		nr_gracza = 1 - nr_gracza;
+		player_nr = 1 - player_nr;
 		
 	}
 	
-	wyswietlPlansze(tab,kolumn,wierszy);
+	showBoard(tab,columns,rows);
 	
-	switch(sprawdzStanPlanszy(tab,kolumn,wierszy))
+	switch(checkBoardState(tab,columns,rows))
 	{
 		case 'x':
-			cout<<"Wygrana GraczaX"<<endl;break;
+			cout<<"PlayerX wins!"<<endl;break;
 		case 'o':
-			cout<<"Wygrana GraczaO"<<endl;break;
-		case 'r':
-			cout<<"Remis"<<endl;break;
+			cout<<"PlayerO wins!"<<endl;break;
+		case 'd':
+			cout<<"Draw"<<endl;break;
 			
 	}
 	
-	for(int i=0;i<kolumn;i++){
+	for(int i=0;i<columns;i++){
 		delete[] tab[i];
 	}
 	
 	delete[] tab;
-	delete[] indexy;
+	delete[] indeces;
  	
 	return 0;
 }
